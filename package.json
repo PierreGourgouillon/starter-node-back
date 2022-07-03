@@ -1,0 +1,23 @@
+{
+  "name": NAME_PROJECT,
+  "version": "1.0.0",
+  "description": "",
+  "main": "server.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+" + REPO_GIT
+  },
+  "author": "",
+  "license": "ISC",
+  "homepage": REPO_GIT + "#readme",
+  "dependencies": {
+    "body-parser": "^1.20.0",
+    "cors": "^2.8.5",
+    "express": "^4.18.1",
+    "firebase-admin": "^11.0.0",
+    "mongoose": "^6.4.2"
+  }
+}

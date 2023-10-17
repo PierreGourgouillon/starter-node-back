@@ -1,9 +1,10 @@
 {
-  "name": "NAME_PROJECT",
+  "name": {PACKAGE_NAME},
   "version": "1.0.0",
   "description": "",
   "main": "server.js",
   "scripts": {
+    "cli": "node CLI/index.js",
     "start": "nodemon server.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
@@ -17,10 +18,8 @@
   "dependencies": {
     "body-parser": "^1.20.0",
     "cors": "^2.8.5",
-    "dotenv": "^16.3.1",
     "express": "^4.18.1",
     "firebase-admin": "^11.0.0",
-    "mongoose": "^6.4.2",
-    "nodemon": "^3.0.1"
+    "mongoose": "^6.4.2"
   }
 }

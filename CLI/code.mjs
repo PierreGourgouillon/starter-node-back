@@ -1,4 +1,30 @@
-const firebase = require("../firebase/admin");
+export function getFirebaseAuthCode() {
+    return `
+    const firebase = require("firebase-admin");
+    const credentials = require("./credentials.json");
+
+    firebase.initializeApp({
+      credential: firebase.credential.cert(credentials),
+    });
+
+    module.exports = firebase;
+    `
+}
+
+export function getFirebaseAuthDTOCode() {
+  return `
+  class FirebaseDTO {
+    firebaseId
+    mail
+  }
+
+  module.exports = FirebaseDTO
+  `
+}
+
+export function getFirebaseAuthMiddleWareCode() {
+  return `
+  const firebase = require("../firebase/firebase");
 const firebaseDto = require("../dto/FirebaseDTO");
 
 async function authMiddleware(request, response, next) {
@@ -36,3 +62,5 @@ async function authMiddleware(request, response, next) {
 }
 
 module.exports = authMiddleware;
+  `
+}

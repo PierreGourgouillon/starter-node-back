@@ -1,21 +1,49 @@
 import inquirer from 'inquirer';
 import fs from "fs"
+import prettier from 'prettier'
+import * as logger from "./logger.js"
+import FirebaseAuth from './features/firebase.js';
+import { exit } from 'process';
 
 (async () => {
   try {
-    const answers = await getAnswers();
-    editPackageName(answers.packageName)
+    let menuResponse = await menu()
+    const answers = await getAnswers(menuResponse);
+
+    if (menuResponse.menuChoice == "Create a new package") {
+      editPackageName(answers.packageName)
+
+      if (answers.isWantFirebaseAuth) {
+        await new FirebaseAuth(getParentFolderPath(), formattedCode).implement()
+      }
+    }
     // console.log('The answers are: ', answers);
   } catch (err) {
-    console.error(`There was an error while talking to the API: ${err.message}`, err);
+    logger.error("Unknown error");
   }
 })();
 
-function getAnswers() {
-  return inquirer.prompt([
+async function menu() {
+  return await inquirer.prompt([
     {
+      name: 'menuChoice',
+      message: 'Select an option:',
+      type: 'list',
+      choices: [
+        'Create a new package',
+        'Modify an existing package',
+        'Exit'
+      ],
+    }
+  ]);
+}
+
+async function getAnswers(menuResponse) {
+  if (menuResponse.menuChoice === 'Create a new package') {
+    return await inquirer.prompt([
+      {
         name: 'packageName',
-        message: 'What is your package name ?',
+        message: 'What is your package name?',
         type: 'input',
         validate: (packageName) => {
           if(!packageName.length) {
@@ -31,31 +59,52 @@ function getAnswers() {
         filter: (packageName) => {
           return packageName.trim();
         }
-    },
-  {
-    name: 'options',
-    message: 'What would you like to guess for the given first name?',
-    type: 'checkbox',
-    choices: ['gender', 'nationality'],
-    validate: (options) => {
-      if (!options.length) {
-        return 'Choose at least one of the above, use space to choose the option'
+      },
+      {
+        name: 'isWantFirebaseAuth',
+        message: 'Would you like to implement authentication with Firebase?',
+        type: 'confirm',
       }
-
-      return true;
-    }
-  }]);
+    ]);
+  } else if (menuResponse.menuChoice === 'Modify an existing package') {
+    console.log('Modifying an existing package');
+  } else {
+    console.log('Exiting the application');
+    exit(0)
+  }
 }
 
 function editPackageName(packageName) {
-    fs.readFile("../package.json", 'utf-8', function(err, data){
-        if (err) throw err;
+  fs.readFile(getParentFolderPath() + "package.json", 'utf-8', (err, data) => {
+      if (err) {
+        logger.error("Can't find the package.json file");
+        return;
+      }
+      var newValue = data.replace(/\{PACKAGE_NAME\}/g,'"' + packageName + '"');
+  
+      fs.writeFile(getParentFolderPath() + "package.json", newValue, 'utf-8', (err) => {
+          if (err) {
+            logger.error("Can't write int the package.json file");
+            return;
+          }
+          logger.success('Package name edited')
+        }
+      );
+    }
+  );
+}
 
-        var newValue = data.replace(/\{PACKAGE_NAME\}/g,'"' + packageName + '"');
-    
-        fs.writeFile("../package.json", newValue, 'utf-8', function (err) {
-          if (err) throw err;
-          console.log('filelistAsync complete' + newValue);
-        });
-    });
+async function formattedCode(code) {
+  return await prettier.format(code, {
+    parser: 'babel',
+    singleQuote: true,
+    semi: true,
+    trailingComma: 'es5',
+  });
+}
+
+function getParentFolderPath() {
+  const currentModuleUrl = import.meta.url;
+  const url = new URL(currentModuleUrl);
+  return url.pathname.substring(0, url.pathname.lastIndexOf('/') + 1) + "../";
 }

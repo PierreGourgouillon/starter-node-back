@@ -42,7 +42,7 @@ export default class Database {
                 return;
             }
 
-            var newValue = data.replace(/app = express\(\);/, mongodbRequire() + "$&" + "\n connectionMongoDB();");
+            var newValue = data.replace(/const app = express\(\);/, mongodbRequire() + "$&" + "\n connectionMongoDB();");
 
             this.formattedCode(newValue)
             .then((codeFormat) => {

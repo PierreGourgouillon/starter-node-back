@@ -17,5 +17,5 @@ export function mongodbConnection() {
 }
 
 export function mongodbRequire() {
-    return `connectionMongoDB = require('./database/mongodb.init.js'),`
+    return `const connectionMongoDB = require('./database/mongodb.init.js');`
 }

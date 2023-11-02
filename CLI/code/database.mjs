@@ -5,6 +5,7 @@ export function mongodbConnection() {
 
     async function connectionMongoDB() {
         try {
+            mongoose.set("strictQuery", true)
             await mongoose.connect(process.env.MONGOOSE_URL)
             console.log("Connecté à mongodb")
         } catch (e) {
@@ -13,4 +14,8 @@ export function mongodbConnection() {
     }
 
     module.exports = connectionMongoDB`
+}
+
+export function mongodbRequire() {
+    return `connectionMongoDB = require('./database/mongodb.init.js'),`
 }

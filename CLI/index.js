@@ -2,9 +2,9 @@ import inquirer from 'inquirer';
 import fs from "fs"
 import prettier from 'prettier'
 import * as logger from "./logger.js"
-import FirebaseAuth from './features/firebase.js';
 import Database from './features/database.js';
 import { exit } from 'process';
+import Auth from './features/auth/auth.js';
 
 (async () => {
   try {
@@ -13,15 +13,12 @@ import { exit } from 'process';
 
     if (menuResponse.menuChoice == "Create a new package") {
       editPackageName(answers.packageName)
-
-      if (answers.isWantFirebaseAuth) {
-        await new FirebaseAuth(getParentFolderPath(), formattedCode).implement()
-      }
+      await new Auth(getParentFolderPath(), formattedCode, answers.auth).implement()
       await new Database(getParentFolderPath(), formattedCode, answers.database).implement()
     }
 
     if (menuResponse.menuChoice == "Modify an existing package") {
-      
+
     }
     // console.log('The answers are: ', answers);
   } catch (err) {
@@ -67,9 +64,13 @@ async function getAnswers(menuResponse) {
         }
       },
       {
-        name: 'isWantFirebaseAuth',
-        message: 'Would you like to implement authentication with Firebase?',
-        type: 'confirm',
+        name: 'auth',
+        message: 'Select a auth:',
+        type: 'list',
+        choices: [
+          'JWT',
+          'Firebase auth'
+        ],
       },
       {
         name: 'database',

@@ -3,6 +3,7 @@ import fs from "fs"
 import prettier from 'prettier'
 import * as logger from "./logger.js"
 import FirebaseAuth from './features/firebase.js';
+import Database from './features/database.js';
 import { exit } from 'process';
 
 (async () => {
@@ -16,6 +17,11 @@ import { exit } from 'process';
       if (answers.isWantFirebaseAuth) {
         await new FirebaseAuth(getParentFolderPath(), formattedCode).implement()
       }
+      await new Database(getParentFolderPath(), formattedCode, answers.database).implement()
+    }
+
+    if (menuResponse.menuChoice == "Modify an existing package") {
+      
     }
     // console.log('The answers are: ', answers);
   } catch (err) {
@@ -64,10 +70,51 @@ async function getAnswers(menuResponse) {
         name: 'isWantFirebaseAuth',
         message: 'Would you like to implement authentication with Firebase?',
         type: 'confirm',
+      },
+      {
+        name: 'database',
+        message: 'Select a database:',
+        type: 'list',
+        choices: [
+          'mongodb'
+        ],
       }
     ]);
   } else if (menuResponse.menuChoice === 'Modify an existing package') {
-    console.log('Modifying an existing package');
+    return await inquirer.prompt([
+      {
+        name: 'packageName',
+        message: 'What is your package name?',
+        type: 'input',
+        validate: (packageName) => {
+          if(!packageName.length) {
+            return 'Please provide a package name';
+          }
+
+          if(packageName.length <= 3 || packageName.length > 20) {
+            return 'Please provide a package name between 4 and 20 characters long';
+          }
+
+          return true;
+        },
+        filter: (packageName) => {
+          return packageName.trim();
+        }
+      },
+      {
+        name: 'isWantFirebaseAuth',
+        message: 'Would you like to implement authentication with Firebase?',
+        type: 'confirm',
+      },
+      {
+        name: 'database',
+        message: 'Select a database:',
+        type: 'list',
+        choices: [
+          'mongodb'
+        ],
+      }
+    ]);
   } else {
     console.log('Exiting the application');
     exit(0)

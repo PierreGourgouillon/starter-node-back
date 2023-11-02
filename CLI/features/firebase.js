@@ -1,6 +1,6 @@
 import fs from "fs"
 import * as logger from "../logger.js"
-import { getFirebaseAuthCode, getFirebaseAuthDTOCode, getFirebaseAuthMiddleWareCode } from "../code.mjs"
+import { getFirebaseAuthCode, getFirebaseAuthDTOCode, getFirebaseAuthMiddleWareCode } from "../code/firebase.mjs"
 
 export default class FirebaseAuth {
     constructor(parentPath, formattedCode) {

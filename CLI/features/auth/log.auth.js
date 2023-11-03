@@ -65,10 +65,14 @@ export default class LogAuth {
 
         let code = getLogControllerCode();
         if (this.authType == "JWT") {
-            code = code.replace(/\{CRYPTO_VARIABLE\}/g, 'const crypto = require("crypto")')
+            code = code.replace(/\{CRYPTO_VARIABLE\}/g, 'const crypto = require("crypto"); const bcrypt = require("bcrypt")')
+            code = code.replace(/\{HASH_PASSWORD\}/g, 'const salt = await bcrypt.genSalt(10); const hashedPassword = await bcrypt.hash(password, salt);')
+            code = code.replace(/\{SET_PASSWORD_MODEL\}/g, 'password: hashedPassword,')
             code = code.replace(/\{GET_USERID_CODE\}/g, 'crypto.randomUUID().toString()')
         } else {
             code = code.replace(/\{CRYPTO_VARIABLE\}/g, '')
+            code = code.replace(/\{HASH_PASSWORD\}/g, '')
+            code = code.replace(/\{SET_PASSWORD_MODEL\}/g, '')
             code = code.replace(/\{GET_USERID_CODE\}/g, 'req.user.userId')
         }
 
@@ -90,6 +94,13 @@ export default class LogAuth {
         }
 
         let code = getUserModelCode();
+
+        if (this.authType == "JWT") {
+            code = code.replace(/\{PASSWORD\}/g, 'password: String,')
+        } else {
+            code = code.replace(/\{PASSWORD\}/g, '')
+        }
+
         let codeFormat = await this.formattedCode(code);
 
         await fs.writeFile(this.parentPath + dir + `/user.model.js`, codeFormat, 'utf8');

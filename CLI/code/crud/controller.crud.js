@@ -46,8 +46,11 @@ exports.register = async (req, res, next) => {
             return res.status(400).json({ message: 'PASSWORD_INCORRECT' });
         }
 
+        {HASH_PASSWORD}
+
         const newUser = new User({
             ...req.body,
+            {SET_PASSWORD_MODEL}
             userId: {GET_USERID_CODE}
         })
         await newUser.save()

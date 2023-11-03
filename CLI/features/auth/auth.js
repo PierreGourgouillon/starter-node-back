@@ -2,6 +2,7 @@ import FirebaseAuth from './firebase.js';
 import JWT from './jwt.js';
 import { getUserDTOCode } from "../../code/auth/auth.mjs"
 import fs from "fs"
+import LogAuth from './log.auth.js';
 
 export default class Auth {
     constructor(parentPath, formattedCode, type) {
@@ -12,6 +13,7 @@ export default class Auth {
 
     async implement() {
         try {
+            await new LogAuth(this.parentPath, this.formattedCode, this.type).create()
             await this.createUserDTO()
             if (this.type == "JWT") {
                 await new JWT(this.parentPath, this.formattedCode).implement()

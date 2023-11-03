@@ -23,3 +23,56 @@ export function getRequireAppCode() {
 export function getAppUseCode() {
     return `app.use('/api/{ROUTE_NAME}s', {ROUTE_NAME}Routes);`
 }
+
+export function getLogControllerCode() {
+    return `
+    const User = require('../models/user.model.js');
+    {CRYPTO_VARIABLE}
+
+exports.register = async (req, res, next) => {
+    try {
+        const { email, firstname, lastname, password } = req.body;
+
+        const existingUser = await User.findOne({ email: req.body.email })
+        
+        if (existingUser) {
+            return res.status(400).json({ message: 'USER_ALREADY_EXIST' });
+        }
+
+        if (password.length <= 6) {
+            return res.status(400).json({ message: 'PASSWORD_INCORRECT' });
+        }
+
+        const newUser = new User({
+            ...req.body,
+            userId: {GET_USERID_CODE}
+        })
+        await newUser.save()
+
+        res.status(201).json({
+            error: null,
+            data: {
+                email: email,
+                firstname: firstname,
+                lastname: lastname
+            }
+        });
+    } catch (error) {
+        res.status(400).json({
+            error: "INTERNAL_ERROR",
+            data: {}
+        });
+    }
+};
+
+exports.login = async (req, res, next) => {};
+    `
+}
+
+export function getRequireLogAppCode() {
+    return `const authRoutes = require('./routes/auth.routes.js')`
+}
+
+export function getAppLogUseCode() {
+    return `app.use('/api/auth', authRoutes);`
+}

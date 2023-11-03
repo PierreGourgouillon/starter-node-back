@@ -13,3 +13,17 @@ router.delete({DELETE_METHOD_NAME}, {DELETE_CONTROLLER})
 module.exports = router;
     `
 }
+
+export function getLogRouterCode() {
+    return `
+    const express = require('express');
+    const router = express.Router();
+    const controller = require('../controllers/auth.controller')
+    {MIDDLEWARE_VARIABLE}
+
+    router.post("/register", {REGISTER_CONTROLLER})
+    router.post("/login", {LOGIN_CONTROLLER})
+
+    module.exports = router;
+    `
+}

@@ -84,10 +84,10 @@ export default class CRUD {
         let code = getControllerCode()
         code = code.replace(/\{ROUTE_NAME_CODE\}/g, this.capitalize(this.crudName))
         code = code.replace(/\{ROUTE_NAME\}/g, this.lowerCase(this.crudName))
-        code = code.replace(/\{GET_CONTROLLER_NAME\}/g, `controller.get${this.capitalize(this.crudName)}`)
-        code = code.replace(/\{POST_CONTROLLER_NAME\}/g, `controller.post${this.capitalize(this.crudName)}`)
-        code = code.replace(/\{PUT_CONTROLLER_NAME\}/g, `controller.put${this.capitalize(this.crudName)}`)
-        code = code.replace(/\{DELETE_CONTROLLER_NAME\}/g, `controller.delete${this.capitalize(this.crudName)}`)
+        code = code.replace(/\{GET_CONTROLLER_NAME\}/g, `get${this.capitalize(this.crudName)}`)
+        code = code.replace(/\{POST_CONTROLLER_NAME\}/g, `post${this.capitalize(this.crudName)}`)
+        code = code.replace(/\{PUT_CONTROLLER_NAME\}/g, `put${this.capitalize(this.crudName)}`)
+        code = code.replace(/\{DELETE_CONTROLLER_NAME\}/g, `delete${this.capitalize(this.crudName)}`)
 
         let codeFormat = await this.formattedCode(code)
 
@@ -127,7 +127,7 @@ export default class CRUD {
 
         fs.readFile(this.parentPath + "app.js", 'utf-8', (err, data) => {
             if (err) {
-              logger.error("Can't find the package.json file");
+              logger.error("Can't find the app.js file");
               return;
             }
             var code = data.replace("module.exports = app;", appUseCode + "\n module.exports = app;");
@@ -137,7 +137,7 @@ export default class CRUD {
             .then((codeFormatted) => {
                 fs.writeFile(this.parentPath + "app.js", codeFormatted, 'utf-8', (err) => {
                     if (err) {
-                      logger.error("Can't write int the package.json file");
+                      logger.error("Can't write int the app.js file");
                       return;
                     }
                   }

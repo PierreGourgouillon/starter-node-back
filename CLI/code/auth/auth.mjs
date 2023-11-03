@@ -30,5 +30,7 @@ function jwtAuthentication(req, res, next) {
     }
     return res.sendStatus(401)
 }
+
+module.exports = jwtAuthentication;
   `
 }

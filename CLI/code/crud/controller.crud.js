@@ -2,6 +2,9 @@ export function getControllerCode() {
     return `
     const {ROUTE_NAME_CODE} = require('../models/{ROUTE_NAME}.model.js');
 
+    exports.{GET_ALL_CONTROLLER_NAME} = async (req, res, next) => {
+    }
+
     exports.{GET_CONTROLLER_NAME} = async (req, res, next) => {
     }
 

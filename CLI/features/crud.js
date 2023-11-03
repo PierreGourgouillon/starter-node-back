@@ -36,17 +36,20 @@ export default class CRUD {
 
         code = code.replace(/\{ROUTE_NAME\}/g, this.crudName)
 
-        code = code.replace(/\{GET_METHOD_NAME\}/g,'"' + "/" + '"')
-        code = this.replaceControllerInRoute(code, /\{GET_CONTROLLER\}/g, "get")
+        code = code.replace(/\{GET_METHOD_NAME_ALL\}/g,`"/"`)
+        code = this.replaceControllerInRoute(code, /\{GET_CONTROLLER_ALL\}/g, "get", this.capitalize(`${this.crudName}s`))
 
-        code = code.replace(/\{POST_METHOD_NAME\}/g, '"' + "/" + '"')
-        code = this.replaceControllerInRoute(code, /\{POST_CONTROLLER\}/g, "post")
+        code = code.replace(/\{GET_METHOD_NAME\}/g,`"/:id${this.capitalize(this.crudName)}"`)
+        code = this.replaceControllerInRoute(code, /\{GET_CONTROLLER\}/g, "get", this.capitalize(`${this.crudName}`))
 
-        code = code.replace(/\{PUT_METHOD_NAME\}/g, '"' + "/" + '"')
-        code = this.replaceControllerInRoute(code, /\{PUT_CONTROLLER\}/g, "put")
+        code = code.replace(/\{POST_METHOD_NAME\}/g, `"/"`)
+        code = this.replaceControllerInRoute(code, /\{POST_CONTROLLER\}/g, "post", this.capitalize(`${this.crudName}`))
 
-        code = code.replace(/\{DELETE_METHOD_NAME\}/g, '"' + "/" + '"')
-        code = this.replaceControllerInRoute(code, /\{DELETE_CONTROLLER\}/g, "delete")
+        code = code.replace(/\{PUT_METHOD_NAME\}/g, `"/:id${this.capitalize(this.crudName)}"`)
+        code = this.replaceControllerInRoute(code, /\{PUT_CONTROLLER\}/g, "put", this.capitalize(`${this.crudName}`))
+
+        code = code.replace(/\{DELETE_METHOD_NAME\}/g, `"/:id${this.capitalize(this.crudName)}"`)
+        code = this.replaceControllerInRoute(code, /\{DELETE_CONTROLLER\}/g, "delete", this.capitalize(`${this.crudName}`))
 
         const codeFormat = await this.formattedCode(code)
           
@@ -58,20 +61,20 @@ export default class CRUD {
         });
     }
 
-    replaceControllerInRoute(code, regex, method) {
+    replaceControllerInRoute(code, regex, method, crudName) {
         if (this.isProtectRoute) {
             if (this.authType == "JWT") {
                 code = code.replace(/\{IMPORT_MIDDLEWARE\}/g, 'const jwtAuthentication = require("../middlewares/jwt.middleware.js")')
-                return code.replace(regex, `jwtAuthentication, controller.${method}${this.capitalize(this.crudName)}`)
+                return code.replace(regex, `jwtAuthentication, controller.${method}${crudName}`)
             }
 
             if (this.authType == "Firebase auth"){
                 code = code.replace(/\{IMPORT_MIDDLEWARE\}/g, 'const firebaseMiddleware = require("../middlewares/firebase.middleware.js")')
-                return code.replace(regex, `firebaseMiddleware, controller.${method}${this.capitalize(this.crudName)}`)
+                return code.replace(regex, `firebaseMiddleware, controller.${method}${crudName}`)
             }
         }
         code = code.replace(/\{IMPORT_MIDDLEWARE\}/g, "")
-        return code.replace(regex, `controller.${method}${this.capitalize(this.crudName)}`)
+        return code.replace(regex, `controller.${method}${crudName}`)
     }
 
     async createController() {
@@ -84,6 +87,7 @@ export default class CRUD {
         let code = getControllerCode()
         code = code.replace(/\{ROUTE_NAME_CODE\}/g, this.capitalize(this.crudName))
         code = code.replace(/\{ROUTE_NAME\}/g, this.lowerCase(this.crudName))
+        code = code.replace(/\{GET_ALL_CONTROLLER_NAME\}/g, `get${this.capitalize(this.crudName)}s`)
         code = code.replace(/\{GET_CONTROLLER_NAME\}/g, `get${this.capitalize(this.crudName)}`)
         code = code.replace(/\{POST_CONTROLLER_NAME\}/g, `post${this.capitalize(this.crudName)}`)
         code = code.replace(/\{PUT_CONTROLLER_NAME\}/g, `put${this.capitalize(this.crudName)}`)
